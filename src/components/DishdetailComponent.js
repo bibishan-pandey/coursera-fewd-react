@@ -19,19 +19,21 @@ const RenderDish = ({ dish }) => {
     }
 };
 
+const RenderComment = ({ comment }) => {
+    return (
+        <li key={comment.id}>
+            <p>{comment.comment}</p>
+            <p>-- {comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(comment.date)))}</p>
+        </li>
+    );
+};
+
 const RenderComments = ({ comments }) => {
     return (
         <div>
             <h4>Comments</h4>
             <ul className={"list-unstyled"}>
-                {comments.map(comment => {
-                    return (
-                        <li key={comment.id}>
-                            <p>{comment.comment}</p>
-                            <p>-- {comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(comment.date)))}</p>
-                        </li>
-                    );
-                })}
+                {comments.map(comment => <RenderComment comment={comment} />)}
             </ul>
         </div>
     );
