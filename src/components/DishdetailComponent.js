@@ -19,19 +19,33 @@ const RenderDish = ({ dish }) => {
     }
 };
 
+const Comment = ({ comment }) => {
+    return (
+        <li key={comment.id}>
+            <div className={"row"}>
+                <div className={"col-6 align-self-center"}>
+                    <p className={"lead font-weight-bold font-italic font-dark"}>
+                        {comment.author}
+                    </p>
+                </div>
+                <div className={"col-6 align-self-center"}>
+                    <p className={"d-flex justify-content-end font-italic font-weight-light font-light"}>
+                        {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(comment.date)))}
+                    </p>
+                </div>
+            </div>
+            <p className={"pl-3 text-secondary"}>{comment.comment}</p>
+        </li>
+    );
+};
+
 const RenderComments = ({ comments }) => {
     return (
         <div>
-            <h4>Comments</h4>
+            <p className={"display-4 text-dark"}>Comments</p>
+            <hr/>
             <ul className={"list-unstyled"}>
-                {comments.map(comment => {
-                    return (
-                        <li key={comment.id}>
-                            <p>{comment.comment}</p>
-                            <p>-- {comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(comment.date)))}</p>
-                        </li>
-                    );
-                })}
+                {comments.map(comment => <Comment key={comment.id} comment={comment} />)}
             </ul>
         </div>
     );
