@@ -24,7 +24,7 @@ const Home = (props) => {
                 <div className={"col-12 col-md mb-1"}>
                     <RenderCard item={props.promotion} />
                 </div>
-                <div className={"col-12 col-md mb-1"}>
+                <div className={"col-12 col-md"}>
                     <RenderCard item={props.leader} />
                 </div>
             </div>

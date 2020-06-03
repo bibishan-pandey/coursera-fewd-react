@@ -1,6 +1,6 @@
 import React from "react";
 import Menu from "./MenuComponent";
-// import DishDetail from "./DishdetailComponent";
+import DishDetail from "./DishdetailComponent";
 import { COMMENTS } from "../shared/comments";
 import { DISHES } from "../shared/dishes";
 import { LEADERS } from "../shared/leaders";
@@ -22,18 +22,6 @@ class Main extends React.Component {
         };
     }
 
-    // onDishSelect(dishId) {
-    //     this.setState({ selectedDish: dishId });
-    // }
-
-    // renderDish = () => {
-    //     if(this.state.selectedDish !== null) {
-    //         return (
-    //             <DishDetail dish={this.state.dishes.filter(dish => dish.id === this.state.selectedDish)[0]} />
-    //         );
-    //     }
-    // }
-
     render() {
 
         const HomePage = () => {
@@ -44,14 +32,21 @@ class Main extends React.Component {
             );
         };
 
+        const DishWithId = ({ match, location, history }) => {
+            return (
+                <DishDetail 
+                    dish={this.state.dishes.filter(dish => dish.id === parseInt(match.params.dishId, 10))[0]}
+                    comments={this.state.comments.filter(comment => comment.dishId === parseInt(match.params.dishId, 10))} />
+            );
+        };
+
         return (
             <div>
                 <Header />
-                {/* <Menu dishes={this.state.dishes} onClick={(dishId) => this.onDishSelect(dishId)} /> */}
-                {/* { this.renderDish() } */}
                 <Switch>
                     <Route path="/home" component={HomePage} />
                     <Route exact path="/menu" component={() => <Menu dishes={this.state.dishes} />} />
+                    <Route path="/menu/:dishId" component={DishWithId} />
                     <Route exact path="/contactus" component={() => <Contact />} />
                     <Redirect to="/home" />
                 </Switch>
