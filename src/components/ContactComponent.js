@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BreadcrumbItem, Breadcrumb, Form, FormGroup, Label, Input, Col, Button } from 'reactstrap';
+import { BreadcrumbItem, Breadcrumb, Form, FormGroup, Label, Input, Col, Button, FormFeedback } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
 class Contact extends Component {
@@ -11,11 +11,82 @@ class Contact extends Component {
             lastname: '',
             telnum: '',
             email: '',
-            agree: false,
+            agree: true,
             contactType: 'Telephone',
-            message: ''
+            message: '',
+            touched: {
+                firstname: false,
+                lastname: false,
+                telnum: false,
+                email: false,
+                message: false
+            },
         };
     }
+
+    handleBlur = (field) => (event) => {
+        this.setState({
+            touched: {
+                ...this.state.touched, [field]: true
+            }
+        });
+    };
+
+    validate = (firstname, lastname, telnum, email, message) => {
+        const noErrors = true;
+        const errors = {
+            firstname: '* Required! >= 3 characters',
+            lastname: '* Required! >= 3 characters',
+            telnum: '* Required! Can contain numbers only',
+            email: '* Required!',
+            message: '* Required! >= 100 characters'
+        };
+        
+        if (this.state.touched.firstname && firstname.length < 3) {
+            errors.firstname = '* Required! >= 3 characters';
+        } else if (this.state.touched.firstname && firstname.length > 20) {
+            errors.firstname = '* Required! <= 20 characters';
+        } else if (this.state.touched.firstname && noErrors) {
+            errors.firstname = '';
+        }
+
+        if (this.state.touched.lastname && lastname.length < 3) {
+            errors.lastname = '* Required! >= 3 characters';
+        } else if (this.state.touched.lastname && lastname.length > 20) {
+            errors.lastname = '* Required! <= 20 characters';
+        } else if (this.state.touched.lastname && noErrors) {
+            errors.lastname = '';
+        }
+
+        const numReg = /^\d+$/;
+        if (this.state.touched.telnum && !numReg.test(telnum)) {
+            errors.telnum = '* Required! Can contain numbers only';
+        } else if (this.state.touched.telnum && telnum.length !== 10) {
+            errors.telnum = 'Not a valid telephone number';
+        } else if (this.state.touched.telnum && noErrors) {
+            errors.telnum = '';
+        }
+
+        const emailReg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+        if (this.state.touched.email && email === '') {
+            errors.email = '* Required!';
+        }
+        else if (this.state.touched.email && !emailReg.test(email)) {
+            errors.email = 'Not a valid email';
+        } else if (this.state.touched.email && noErrors) {
+            errors.email = '';
+        }
+
+        if (this.state.touched.message && message.length < 100) {
+            errors.message = '* Required! >= 100 characters';
+        } else if (this.state.touched.message && message.length > 500) {
+            errors.message = '* Required! <= 500 characters';
+        } else if (this.state.touched.message && noErrors) {
+            errors.message = '';
+        }
+
+        return errors;
+    };
 
     handleInputChange = (event) => {
         const target = event.target;
@@ -28,12 +99,41 @@ class Contact extends Component {
     };
 
     handleSubmit = (event) => {
-        console.log('Current State: ' + JSON.stringify(this.state));
-        alert('Current State: ' + JSON.stringify(this.state));
+        console.log(this.state);
         event.preventDefault();
     };
 
+    contactTypeFalse = () => {
+        return (
+            <Col md={{ size: 6 }}>
+                <Input type="select" name="contactType"
+                    value='---------'
+                    disabled={true}>
+                    <option>Telephone</option>
+                    <option>Email</option>
+                </Input>
+            </Col>
+        );
+    };
+
+    contactTypeTrue = () => {
+        return (
+            <Col md={{ size: 6 }}>
+                <Input type="select" name="contactType"
+                    value={this.state.contactType}
+                    onChange={this.handleInputChange}>
+                    <option>Telephone</option>
+                    <option>Email</option>
+                </Input>
+            </Col>
+        );
+    };
+
     render() {
+
+        const errors = this.validate(this.state.firstname, this.state.lastname,
+            this.state.telnum, this.state.email, this.state.message);
+
         return (
             <div className="container">
                 <div className={"row mt-5"}>
@@ -91,8 +191,15 @@ class Contact extends Component {
                                     <Col className={"p-0"}>
                                         <Input type="text" id="firstname" name="firstname"
                                             placeholder="e.g. John"
+                                            autoComplete="off"
                                             value={this.state.firstname}
+                                            valid={errors.firstname === ''}
+                                            invalid={errors.firstname !== ''}
+                                            onBlur={this.handleBlur('firstname')}
                                             onChange={this.handleInputChange} />
+                                        <FormFeedback>
+                                            {errors.firstname}
+                                        </FormFeedback>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup className={"col-12 col-md-6"}>
@@ -100,8 +207,15 @@ class Contact extends Component {
                                     <Col className={"p-0"}>
                                         <Input type="text" id="lastname" name="lastname"
                                             placeholder="e.g. Doe"
+                                            autoComplete="off"
                                             value={this.state.lastname}
+                                            valid={errors.lastname === ''}
+                                            invalid={errors.lastname !== ''}
+                                            onBlur={this.handleBlur('lastname')}
                                             onChange={this.handleInputChange} />
+                                        <FormFeedback>
+                                            {errors.lastname}
+                                        </FormFeedback>
                                     </Col>
                                 </FormGroup>
                             </div>
@@ -110,9 +224,16 @@ class Contact extends Component {
                                     <Label htmlFor="telnum">Telephone Number</Label>
                                     <Col className={"p-0"}>
                                         <Input type="tel" id="telnum" name="telnum"
-                                            placeholder="e.g. +852 1234 5678"
+                                            placeholder="e.g. 852 1234 5678"
+                                            autoComplete="off"
                                             value={this.state.telnum}
+                                            valid={errors.telnum === ''}
+                                            invalid={errors.telnum !== ''}
+                                            onBlur={this.handleBlur('telnum')}
                                             onChange={this.handleInputChange} />
+                                        <FormFeedback>
+                                            {errors.telnum}
+                                        </FormFeedback>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup className={"col-12 col-md-6"}>
@@ -120,8 +241,15 @@ class Contact extends Component {
                                     <Col className={"p-0"}>
                                         <Input type="email" id="email" name="email"
                                             placeholder="e.g. johndoe@gmail.com"
+                                            autoComplete="off"
                                             value={this.state.email}
+                                            valid={errors.email === ''}
+                                            invalid={errors.email !== ''}
+                                            onBlur={this.handleBlur('email')}
                                             onChange={this.handleInputChange} />
+                                        <FormFeedback>
+                                            {errors.email}
+                                        </FormFeedback>
                                     </Col>
                                 </FormGroup>
                             </div>
@@ -132,13 +260,20 @@ class Contact extends Component {
                                         <Col className={"p-0"}>
                                             <Input type="textarea" id="message" name="message"
                                                 rows={4}
+                                                autoComplete="off"
                                                 value={this.state.message}
+                                                valid={errors.message === ''}
+                                                invalid={errors.message !== ''}
+                                                onBlur={this.handleBlur('message')}
                                                 onChange={this.handleInputChange} />
+                                            <FormFeedback>
+                                                {errors.message}
+                                            </FormFeedback>
                                         </Col>
                                     </FormGroup>
                                 </div>
                                 <div className={"col-12 col-md-6 align-self-center"}>
-                                    <FormGroup row>
+                                    <FormGroup row className={"pt-2 pb-2"}>
                                         <Col md={{ size: 6 }} className={"align-self-center"}>
                                             <FormGroup check>
                                                 <Label check>
@@ -149,17 +284,14 @@ class Contact extends Component {
                                                 </Label>
                                             </FormGroup>
                                         </Col>
-                                        <Col md={{ size: 6 }}>
-                                            <Input type="select" name="contactType"
-                                                value={this.state.contactType}
-                                                onChange={this.handleInputChange}>
-                                                <option>Telephone</option>
-                                                <option>Email</option>
-                                            </Input>
-                                        </Col>
+                                        {
+                                            this.state.agree ? 
+                                                this.contactTypeTrue() : this.contactTypeFalse()
+                                        }
+
                                     </FormGroup>
                                     <FormGroup row>
-                                        <Col md={{ size: 6, offset: 6 }} className={"d-flex justify-content-end"}>
+                                        <Col md={{ size: 6 }} className={"d-flex align-items-end"}>
                                             <Button type="submit" color="primary">
                                                 Send Feedback
                                             </Button>
