@@ -3,37 +3,17 @@ import { BreadcrumbItem, Breadcrumb, Label, Col, Button } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
 
+const required = (value) => value && value.length;
+const maxLength = (len) => (value) => !(value) || (value.length) <= len; 
+const minLength = (len) => (value) => (value) && (value.length) >= len; 
+const isNumber = (value) => !isNaN(Number(value));
+const validEmail = (value) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value);
+
 class Contact extends Component {
 
     handleSubmit = (values) => {
         console.log('Current State is: ' + JSON.stringify(values));
         alert('Current State is: ' + JSON.stringify(values));
-    };
-
-    contactTypeFalse = () => {
-        return (
-            <Col md={{ size: 6 }}>
-                <Control.select model=".contactType" name="contactType"
-                    value='---------'
-                    className="form-control"
-                    disabled={true}>
-                    <option>Telephone</option>
-                    <option>Email</option>
-                </Control.select>
-            </Col>
-        );
-    };
-
-    contactTypeTrue = () => {
-        return (
-            <Col md={{ size: 6 }}>
-                <Control.select model=".contactType" name="contactType"
-                    className={"form-control"}>
-                    <option>Telephone</option>
-                    <option>Email</option>
-                </Control.select>
-            </Col>
-        );
     };
 
     render() {
@@ -97,7 +77,20 @@ class Contact extends Component {
                                             name="firstname"
                                             placeholder="e.g. John"
                                             autoComplete="off"
+                                            validators={{
+                                                required,
+                                                minLength: minLength(3),
+                                                maxLength: maxLength(20)
+                                            }}
                                             className={"form-control"} />
+                                        <Errors className="text-danger"
+                                            model=".firstname"
+                                            show="touched"
+                                            messages={{
+                                                required: '* Required! ',
+                                                minLength: 'Must be >= 3 characters! ',
+                                                maxLength: 'Must be <= 20 characters! '
+                                            }} />
                                     </Col>
                                 </div>
                                 <div className={"col-12 col-md-6 form-group"}>
@@ -108,7 +101,20 @@ class Contact extends Component {
                                             name="lastname"
                                             placeholder="e.g. Doe"
                                             autoComplete="off"
+                                            validators={{
+                                                required,
+                                                minLength: minLength(3),
+                                                maxLength: maxLength(20)
+                                            }}
                                             className={"form-control"} />
+                                        <Errors className="text-danger"
+                                            model=".lastname"
+                                            show="touched"
+                                            messages={{
+                                                required: '* Required! ',
+                                                minLength: 'Must be >= 3 characters! ',
+                                                maxLength: 'Must be <= 20 characters! '
+                                            }} />
                                     </Col>
                                 </div>
                             </div>
@@ -121,7 +127,22 @@ class Contact extends Component {
                                             name="telnum"
                                             placeholder="e.g. 852 1234 5678"
                                             autoComplete="off"
+                                            validators={{
+                                                required,
+                                                minLength: minLength(10),
+                                                maxLength: maxLength(10),
+                                                isNumber
+                                            }}
                                             className={"form-control"} />
+                                        <Errors className="text-danger"
+                                            model=".telnum"
+                                            show="touched"
+                                            messages={{
+                                                required: '* Required! ',
+                                                minLength: 'Must be 10 characters! ',
+                                                maxLength: 'Must be 10 characters! ',
+                                                isNumber: 'Must be only numbers! '
+                                            }} />
                                     </Col>
                                 </div>
                                 <div className={"col-12 col-md-6 form-group"}>
@@ -132,7 +153,18 @@ class Contact extends Component {
                                             name="email"
                                             placeholder="e.g. johndoe@gmail.com"
                                             autoComplete="off"
+                                            validators={{
+                                                required,
+                                                validEmail
+                                            }}
                                             className={"form-control"} />
+                                        <Errors className="text-danger"
+                                            model=".email"
+                                            show="touched"
+                                            messages={{
+                                                required: '* Required! ',
+                                                validEmail: 'Not a valid email! '
+                                            }} />
                                     </Col>
                                 </div>
                             </div>
@@ -144,7 +176,20 @@ class Contact extends Component {
                                             <Control.textarea model=".message" id="message" name="message"
                                                 rows={4}
                                                 autoComplete="off"
+                                                validators={{
+                                                    required,
+                                                    minLength: minLength(50),
+                                                    maxLength: maxLength(500)
+                                                }}
                                                 className="form-control" />
+                                            <Errors className="text-danger"
+                                                model=".message"
+                                                show="touched"
+                                                messages={{
+                                                    required: '* Required! ',
+                                                    minLength: 'Must be 50 characters! ',
+                                                    maxLength: 'Must be 50 characters! '
+                                                }} />
                                         </Col>
                                     </div>
                                 </div>
