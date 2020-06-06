@@ -66,7 +66,7 @@ class CommentForm extends Component {
                                             autoComplete="off"
                                             validators={{
                                                 required,
-                                                minLength: minLength(2),
+                                                minLength: minLength(3),
                                                 maxLength: maxLength(15)
                                             }}
                                             className={"form-control"} />
@@ -75,7 +75,7 @@ class CommentForm extends Component {
                                             show="touched"
                                             messages={{
                                                 required: '* Required! ',
-                                                minLength: 'Must be >= 2 characters! ',
+                                                minLength: 'Must be >= 3 characters! ',
                                                 maxLength: 'Must be <= 15 characters! '
                                             }} />
                                     </Col>
