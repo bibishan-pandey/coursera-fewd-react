@@ -21,10 +21,11 @@ class CommentForm extends Component {
         });
     };
 
-    handleComment = (values) => {
+    handleSubmit = (values) => {
         this.toggleModal();
-        console.log('Current State is: ' + JSON.stringify(values));
-        alert('Current State is: ' + JSON.stringify(values));
+        // console.log('Current State is: ' + JSON.stringify(values));
+        // alert('Current State is: ' + JSON.stringify(values));
+        this.props.addComment(this.props.dishId, values.rating, values.author, values.comment)
     };
 
     render() {
@@ -38,7 +39,7 @@ class CommentForm extends Component {
                         Submit Comment
                     </ModalHeader>
                     <ModalBody>
-                        <LocalForm onSubmit={(values) => this.handleComment(values)}>
+                        <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
                             <div className={"row"}>
                                 <div className={"col-12 col-md-12 form-group"}>
                                     <Label htmlFor="rating">Rating</Label>
@@ -83,9 +84,9 @@ class CommentForm extends Component {
                             </div>
                             <div className={"row"}>
                                 <div className={"col-12 col-md-12 form-group"}>
-                                    <Label htmlFor="message">Feedback Message</Label>
+                                    <Label htmlFor="comment">Feedback Message</Label>
                                     <Col className={"p-0"}>
-                                        <Control.textarea model=".message" id="message" name="message"
+                                        <Control.textarea model=".comment" id="comment" name="comment"
                                             rows={4}
                                             autoComplete="off"
                                             validators={{
@@ -95,7 +96,7 @@ class CommentForm extends Component {
                                             }}
                                             className="form-control" />
                                         <Errors className="text-danger"
-                                            model=".message"
+                                            model=".comment"
                                             show="touched"
                                             messages={{
                                                 required: '* Required! ',
@@ -165,7 +166,7 @@ const Comment = ({ comment }) => {
     );
 };
 
-const RenderComments = ({ comments }) => {
+const RenderComments = ({ comments, addComment, dishId }) => {
     return (
         <div className={"col-12 col-md-6"}>
             <p className={"display-4 text-dark"}>Comments</p>
@@ -173,7 +174,7 @@ const RenderComments = ({ comments }) => {
             <ul className={"list-unstyled"}>
                 {comments.map(comment => <Comment key={comment.id} comment={comment} />)}
             </ul>
-            <CommentForm />
+            <CommentForm dishId={dishId} addComment={addComment} />
         </div>
     );
 };
@@ -202,7 +203,9 @@ const DishDetail = (props) => {
             </div>
             <div className={"row mb-5"}>
                 <RenderDish dish={props.dish} />
-                <RenderComments comments={props.comments} />
+                <RenderComments comments={props.comments}
+                    addComment={props.addComment}
+                    dishId={props.dish.id} />
             </div>
         </div>
     );
