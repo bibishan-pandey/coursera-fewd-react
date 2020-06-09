@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
 import { Loading } from './LoadingComponent';
 import { baseURL } from '../shared/baseURL';
+import { FadeTransform, Fade, Stagger } from 'react-animation-components';
 
 const required = (value) => value && value.length;
 const maxLength = (len) => (value) => !(value) || (value.length) <= len;
@@ -127,13 +128,18 @@ const RenderDish = ({ dish }) => {
     if (dish != null) {
         return (
             <div className={"col-12 col-md-6"}>
-                <Card>
-                    <CardImg width="100%" src={baseURL + dish.image} alt={dish.name} />
-                    <CardBody>
-                        <CardTitle>{dish.name}</CardTitle>
-                        <CardText>{dish.description}</CardText>
-                    </CardBody>
-                </Card>
+                <FadeTransform in
+                transformProps={{
+                    exitTransform: 'scale(0.5) translateY(-50%)'
+                }}>
+                    <Card>
+                        <CardImg width="100%" src={baseURL + dish.image} alt={dish.name} />
+                        <CardBody>
+                            <CardTitle>{dish.name}</CardTitle>
+                            <CardText>{dish.description}</CardText>
+                        </CardBody>
+                    </Card>
+                </FadeTransform>
             </div>
         );
     } else {
@@ -145,26 +151,28 @@ const RenderDish = ({ dish }) => {
 
 const Comment = ({ comment }) => {
     return (
-        <li key={comment.id}>
-            <div className={"row"}>
-                <div className={"col-7 align-self-center"}>
-                    <p className={"font-weight-bold font-italic text-dark"}>
-                        {comment.author}
-                    </p>
+        <Fade in>
+            <li key={comment.id}>
+                <div className={"row"}>
+                    <div className={"col-7 align-self-center"}>
+                        <p className={"font-weight-bold font-italic text-dark"}>
+                            {comment.author}
+                        </p>
+                    </div>
+                    <div className={"col-5 align-self-center"}>
+                        <p className={"d-flex justify-content-end font-italic font-weight-light text-secondary"}>
+                            {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(comment.date)))}
+                        </p>
+                    </div>
                 </div>
-                <div className={"col-5 align-self-center"}>
-                    <p className={"d-flex justify-content-end font-italic font-weight-light text-secondary"}>
-                        {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(comment.date)))}
-                    </p>
+                <div className={"row"}>
+                    <div className={"col-12 align-self-center pl-4"}>
+                        <p className={"text-secondary"}><i className="fa fa-comment" aria-hidden="true"></i> {comment.comment}</p>
+                    </div>
                 </div>
-            </div>
-            <div className={"row"}>
-                <div className={"col-12 align-self-center pl-4"}>
-                    <p className={"text-secondary"}><i className="fa fa-comment" aria-hidden="true"></i> {comment.comment}</p>
-                </div>
-            </div>
-            <hr />
-        </li>
+                <hr />
+            </li>
+        </Fade>
     );
 };
 
@@ -174,7 +182,9 @@ const RenderComments = ({ comments, postComment, dishId }) => {
             <p className={"display-4 text-dark"}>Comments</p>
             <hr />
             <ul className={"list-unstyled"}>
-                {comments.map(comment => <Comment key={comment.id} comment={comment} />)}
+                <Stagger in>
+                    {comments.map(comment => <Comment key={comment.id} comment={comment} />)}
+                </Stagger>
             </ul>
             <CommentForm dishId={dishId} postComment={postComment} />
         </div>
