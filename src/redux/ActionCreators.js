@@ -27,9 +27,18 @@ export const fetchDishes = () => (dispatch) => {
     // }, 2000);
 
     // fetch from json data
-    return fetch(baseURL + 'dishes')
+    return fetch(baseURL + 'dishess')
+        .then(response => {
+            if (response.ok) return response;
+            else {
+                const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                error.response= response;
+                throw error;
+            }
+        }, error => { throw new Error(error.message) })
         .then(response => response.json())
         .then(dishes => dispatch(addDishes(dishes)))
+        .catch(error => dispatch(dishesFailed(error.message)));
 };
 
 
@@ -59,8 +68,17 @@ export const addComments = (comments) => ({
 
 export const fetchComments = () => (dispatch) => {
     return fetch(baseURL + 'comments')
+        .then(response => {
+            if (response.ok) return response;
+            else {
+                const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                error.response= response;
+                throw error;
+            }
+        }, error => { throw new Error(error.message) })
         .then(response => response.json())
         .then(comments => dispatch(addComments(comments)))
+        .catch(error => dispatch(commentsFailed(error.message)));
 };
 
 
@@ -90,6 +108,15 @@ export const fetchPromos = () => (dispatch) => {
 
     // fetch from json data
     return fetch(baseURL + 'promotions')
+        .then(response => {
+            if (response.ok) return response;
+            else {
+                const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                error.response= response;
+                throw error;
+            }
+        }, error => { throw new Error(error.message) })
         .then(response => response.json())
         .then(promos => dispatch(addPromos(promos)))
+        .catch(error => dispatch(promosFailed(error.message)));
 };

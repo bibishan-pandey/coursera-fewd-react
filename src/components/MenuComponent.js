@@ -18,14 +18,6 @@ const RenderMenuItem = ({ dish }) => {
 };
 
 const Menu = (props) => {
-    const menu = props.dishes.dishes.map(dish => {
-        return (
-            <div key={dish.id} className={"col-12 col-md-6 mb-1"}>
-                <RenderMenuItem dish={dish} />
-            </div>
-        );
-    });
-
     if (props.dishes.isLoading) {
         return (
             <div className="container">
@@ -43,6 +35,13 @@ const Menu = (props) => {
             </div>
         );
     } else {
+        const menu = props.dishes.dishes.map(dish => {
+            return (
+                <div key={dish.id} className={"col-12 col-md-6 mb-1"}>
+                    <RenderMenuItem dish={dish} />
+                </div>
+            );
+        });
         return (
             <div className={"container"}>
                 <div className={"row mt-5"}>
