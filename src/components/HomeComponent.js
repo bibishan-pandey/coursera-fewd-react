@@ -11,7 +11,9 @@ const RenderCard = ({ item, isLoading, errorMessage }) => {
         );
     } else if (errorMessage) {
         return (
-            <h4>{errorMessage}</h4>
+            <div className="col-12">
+                <p className="display-1 text-danger">{errorMessage}</p>
+            </div>
         );
     } else {
         return (
@@ -47,7 +49,9 @@ const Home = (props) => {
                         errorMessage={props.promosError} />
                 </div>
                 <div className={"col-12 col-md"}>
-                    <RenderCard item={props.leader} />
+                    <RenderCard item={props.leader}
+                        isLoading={props.leadersLoading}
+                        errorMessage={props.leadersError} />
                 </div>
             </div>
         </div>

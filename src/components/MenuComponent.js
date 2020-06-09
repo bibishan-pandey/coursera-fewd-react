@@ -30,7 +30,9 @@ const Menu = (props) => {
         return (
             <div className="container">
                 <div className="row">
-                    <h4>{props.dishes.errorMessage}</h4>
+                    <div className="col-12">
+                        <p className="display-1 text-danger">{props.dishes.errorMessage}</p>
+                    </div>
                 </div>
             </div>
         );

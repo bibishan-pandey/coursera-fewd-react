@@ -127,20 +127,18 @@ class CommentForm extends Component {
 const RenderDish = ({ dish }) => {
     if (dish != null) {
         return (
-            <div className={"col-12 col-md-6"}>
-                <FadeTransform in
+            <FadeTransform in
                 transformProps={{
                     exitTransform: 'scale(0.5) translateY(-50%)'
                 }}>
-                    <Card>
-                        <CardImg width="100%" src={baseURL + dish.image} alt={dish.name} />
-                        <CardBody>
-                            <CardTitle>{dish.name}</CardTitle>
-                            <CardText>{dish.description}</CardText>
-                        </CardBody>
-                    </Card>
-                </FadeTransform>
-            </div>
+                <Card>
+                    <CardImg width="100%" src={baseURL + dish.image} alt={dish.name} />
+                    <CardBody>
+                        <CardTitle>{dish.name}</CardTitle>
+                        <CardText>{dish.description}</CardText>
+                    </CardBody>
+                </Card>
+            </FadeTransform>
         );
     } else {
         return (
@@ -178,7 +176,7 @@ const Comment = ({ comment }) => {
 
 const RenderComments = ({ comments, postComment, dishId }) => {
     return (
-        <div className={"col-12 col-md-6"}>
+        <div>
             <p className={"display-4 text-dark"}>Comments</p>
             <hr />
             <ul className={"list-unstyled"}>
@@ -204,15 +202,11 @@ const DishDetail = (props) => {
         return (
             <div className="container">
                 <div className="row">
-                    <h4>{props.errorMessage}</h4>
-                </div>
-            </div>
-        );
-    } else if (props.commentsErrorMessage) {
-        return (
-            <div className="container">
-                <div className="row">
-                    <h4>{props.commentsErrorMessage}</h4>
+                    <div className="col-12">
+                        <div className="col-12">
+                            <p className="display-1 text-danger">{props.errorMessage}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -239,10 +233,27 @@ const DishDetail = (props) => {
                     </div>
                 </div>
                 <div className={"row mb-5"}>
-                    <RenderDish dish={props.dish} />
-                    <RenderComments comments={props.comments}
-                        postComment={props.postComment}
-                        dishId={props.dish.id} />
+                    <div className="col-12 col-md-6">
+                        <RenderDish dish={props.dish} />
+                    </div>
+                    <div className="col-12 col-md-6">
+                        {/* checking if there is any error message for comments */}
+                        {
+                            (props.commentsErrorMessage) ?
+                                (
+                                    <div className="container">
+                                        <div className="row">
+                                            <div className="col-12">
+                                                <p className="display-1 text-danger">{props.commentsErrorMessage}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) :
+                                <RenderComments comments={props.comments}
+                                    postComment={props.postComment}
+                                    dishId={props.dish.id} />
+                        }
+                    </div>
                 </div>
             </div>
         );

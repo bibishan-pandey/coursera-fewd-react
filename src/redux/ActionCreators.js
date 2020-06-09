@@ -151,3 +151,79 @@ export const fetchPromos = () => (dispatch) => {
 
 
 // for leaders
+export const leadersLoading = () => ({
+    type: ActionTypes.LEADERS_LOADING
+});
+
+export const leadersFailed = (errorMessage) => ({
+    type: ActionTypes.LEADERS_FAILED,
+    payload: errorMessage
+});
+
+export const addLeaders = (leaders) => ({
+    type: ActionTypes.ADD_LEADERS,
+    payload: leaders
+});
+
+export const fetchLeaders = () => (dispatch) => {
+    dispatch(leadersLoading(true));
+    // fetch from json data
+    return fetch(baseURL + 'leaders')
+        .then(response => {
+            if (response.ok) return response;
+            else {
+                const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                error.response = response;
+                throw error;
+            }
+        }, error => { throw new Error(error.message) })
+        .then(response => response.json())
+        .then(leaders => dispatch(addLeaders(leaders)))
+        .catch(error => dispatch(leadersFailed(error.message)));
+};
+
+
+// post feedBack
+export const addFeedback = (feedback) => ({
+    type: ActionTypes.ADD_FEEDBACK,
+    payload: feedback
+});
+
+export const postFeedback = (firstname, lastname, telnum, email, agree, contactType, message) => (dispatch) => {
+    const feedback = {
+        // if the key and value variable names are same we 
+        // can simply write it as below that is equivalent 
+        // as writing, dishId: dishId
+        firstname,
+        lastname,
+        telnum,
+        email,
+        agree,
+        contactType,
+        message
+    };
+    feedback.date = new Date().toISOString();
+    return fetch(baseURL + 'feedback', {
+        method: 'POST',
+        body: JSON.stringify(feedback),
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    })
+    .then(response => {
+        console.log(response);
+        if (response.ok) return response;
+        else {
+            const error = new Error(`Error ${response.status}: ${response.statusText}`);
+            error.response = response;
+            throw error;
+        }
+    }, error => { throw new Error(error.message) })
+    .then(response => response.json())
+    .then(response => dispatch(addFeedback(response)))
+    .catch(error => {
+        console.log(`Post comments error: ${error.message}`);
+        alert(`Post comments error: ${error.message}`);
+    });
+};
