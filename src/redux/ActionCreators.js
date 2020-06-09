@@ -27,12 +27,12 @@ export const fetchDishes = () => (dispatch) => {
     // }, 2000);
 
     // fetch from json data
-    return fetch(baseURL + 'dishess')
+    return fetch(baseURL + 'dishes')
         .then(response => {
             if (response.ok) return response;
             else {
                 const error = new Error(`Error ${response.status}: ${response.statusText}`);
-                error.response= response;
+                error.response = response;
                 throw error;
             }
         }, error => { throw new Error(error.message) })
@@ -43,9 +43,13 @@ export const fetchDishes = () => (dispatch) => {
 
 
 // for comments
-export const addComment = (dishId, rating, author, comment) => ({
+export const addComment = (comment) => ({
     type: ActionTypes.ADD_COMMENT,
-    payload: {
+    payload: comment
+});
+
+export const postComment = (dishId, rating, author, comment) => (dispatch) => {
+    const newComment = {
         // if the key and value variable names are same we 
         // can simply write it as below that is equivalent 
         // as writing, dishId: dishId
@@ -53,8 +57,32 @@ export const addComment = (dishId, rating, author, comment) => ({
         rating,
         author,
         comment
-    }
-});
+    };
+    newComment.date = new Date().toISOString();
+    return fetch(baseURL + 'comments', {
+        method: 'POST',
+        body: JSON.stringify(newComment),
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin"
+    })
+    .then(response => {
+        console.log(response);
+        if (response.ok) return response;
+        else {
+            const error = new Error(`Error ${response.status}: ${response.statusText}`);
+            error.response = response;
+            throw error;
+        }
+    }, error => { throw new Error(error.message) })
+    .then(response => response.json())
+    .then(response => dispatch(addComment(response)))
+    .catch(error => {
+        console.log(`Post comments error: ${error.message}`);
+        alert(`Post comments error: ${error.message}`);
+    });
+};
 
 export const commentsFailed = (errorMessage) => ({
     type: ActionTypes.COMMENTS_FAILED,
@@ -72,7 +100,7 @@ export const fetchComments = () => (dispatch) => {
             if (response.ok) return response;
             else {
                 const error = new Error(`Error ${response.status}: ${response.statusText}`);
-                error.response= response;
+                error.response = response;
                 throw error;
             }
         }, error => { throw new Error(error.message) })
@@ -112,7 +140,7 @@ export const fetchPromos = () => (dispatch) => {
             if (response.ok) return response;
             else {
                 const error = new Error(`Error ${response.status}: ${response.statusText}`);
-                error.response= response;
+                error.response = response;
                 throw error;
             }
         }, error => { throw new Error(error.message) })
@@ -120,3 +148,6 @@ export const fetchPromos = () => (dispatch) => {
         .then(promos => dispatch(addPromos(promos)))
         .catch(error => dispatch(promosFailed(error.message)));
 };
+
+
+// for leaders
